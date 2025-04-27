@@ -71,28 +71,46 @@
     <p>📧 البريد الإلكتروني: support@gmail.com</p>
     <p>📞 الهاتف: +966 55823 4139</p>
     <p>🌐 موقعنا: www.cvwebsite.com</p>
-    <p>المصممين: <span id="designers"></span></p> <!-- هذا العنصر لعرض أسماء المصممين -->
+    <p>المصممين:
+      <ul id="designersList">
+        <li>ماجد الرشيدي</li>
+        <li>سلمان الحارثي</li>
+        <li>نواف البلوي</li>
+        <li>خالد توفيق</li>
+        <li>عبد الله العنزي</li>
+      </ul>
+    </p>
   </div>
 
   <script>
-    // وظيفة لاختيار الأسماء عشوائيًا
-    function displayRandomDesigners() {
+    // Function to shuffle designer names randomly
+    function shuffleDesigners() {
       const designers = [
-        "ماجد الرشيدي",
-        "سلمان الحارثي",
-        "نواف البلوي",
-        "خالد توفيق"
+        "ماجد الرشيدي", 
+        "سلمان الحارثي", 
+        "نواف البلوي", 
+        "خالد توفيق", 
+        "عبد الله العنزي"
       ];
 
-      // خلط الأسماء بشكل عشوائي
-      designers.sort(() => Math.random() - 0.5);
+      // Shuffle array
+      for (let i = designers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [designers[i], designers[j]] = [designers[j], designers[i]]; // Swap
+      }
 
-      // عرض الأسماء العشوائية
-      document.getElementById("designers").textContent = designers.join(", ");
+      // Update the list in HTML
+      const list = document.getElementById("designersList");
+      list.innerHTML = ""; // Clear the existing list
+      designers.forEach(designer => {
+        const li = document.createElement("li");
+        li.textContent = designer;
+        list.appendChild(li);
+      });
     }
 
-    // استدعاء وظيفة الخلط عند تحميل الصفحة
-    window.onload = displayRandomDesigners;
+    // Call shuffleDesigners function when the page loads
+    window.onload = shuffleDesigners;
 
     document.getElementById("cvForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -136,7 +154,7 @@
       const contactMethods = document.getElementById("cvContactMethods").textContent;
       const imgSrc = document.getElementById("cvImage").src;
 
-      doc.text("السيرة الذاتية", 105, 20, { align: "center" });
+      doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
       doc.text(`الاسم: ${name}`, 20, 40);
       doc.text(`البريد: ${email}`, 20, 50);
       doc.text(`النوع: ${gender}`, 20, 60);
