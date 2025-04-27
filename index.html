@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>مولد السيرة الذاتية</title>
+  <title>موقع السيرة الذاتية</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Tahoma, sans-serif; direction: rtl; padding: 20px; background: #f9f9f9; }
@@ -11,6 +11,7 @@
     input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
     button { background: #4CAF50; color: white; border: none; cursor: pointer; }
     button:hover { background: #45a049; }
+    img { max-width: 150px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -30,11 +31,16 @@
     <label>المهارات:</label>
     <textarea id="skills" rows="3"></textarea>
 
+    <!-- إضافة حقل رفع الصورة -->
+    <label>رفع صورة شخصية:</label>
+    <input type="file" id="image" accept="image/*">
+
     <button type="submit">عرض السيرة</button>
   </form>
 
   <div id="cvOutput" class="cv-box" style="display:none;">
     <h2>سيرتك الذاتية</h2>
+    <img id="cvImage" src="" alt="صورة شخصية" style="display:none;">
     <p><strong>الاسم:</strong> <span id="cvName"></span></p>
     <p><strong>البريد:</strong> <span id="cvEmail"></span></p>
     <p><strong>الخبرة:</strong></p>
@@ -47,19 +53,34 @@
   <!-- قسم تواصل معنا -->
   <div class="contact">
     <h2>تواصل معنا</h2>
-    <p>📧 البريد الإلكتروني: support@example.com</p>
-    <p>📞 الهاتف: +966 123 456 789</p>
-    <p>🌐 موقعنا: www.example.com</p>
+    <p>📧 البريد الإلكتروني: support@gmail.com</p>
+    <p>📞 الهاتف: +966 55823 4139</p>
+    <p>🌐 موقعنا: www.cvwebsite.com</p>
   </div>
 
   <script>
     document.getElementById("cvForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
+      // عرض البيانات المدخلة في السيرة الذاتية
       document.getElementById("cvName").textContent = document.getElementById("name").value;
       document.getElementById("cvEmail").textContent = document.getElementById("email").value;
       document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
       document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
+
+      // عرض الصورة إذا تم رفعها
+      var imageInput = document.getElementById("image").files[0];
+      if (imageInput) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var imgElement = document.getElementById("cvImage");
+          imgElement.src = e.target.result;
+          imgElement.style.display = "block";
+        };
+        reader.readAsDataURL(imageInput);
+      } else {
+        document.getElementById("cvImage").style.display = "none";
+      }
 
       document.getElementById("cvOutput").style.display = "block";
     });
@@ -72,6 +93,7 @@
       const email = document.getElementById("cvEmail").textContent;
       const exp = document.getElementById("cvExperience").textContent;
       const skills = document.getElementById("cvSkills").textContent;
+      const imgSrc = document.getElementById("cvImage").src;
 
       doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
       doc.text(`الاسم: ${name}`, 20, 40);
@@ -81,9 +103,15 @@
       doc.text(`المهارات:`, 20, 100);
       doc.text(skills, 30, 110);
 
+      // إضافة الصورة إلى PDF إذا كانت موجودة
+      if (imgSrc) {
+        doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40);  // تحديد موقع وحجم الصورة
+      }
+
       doc.save("cv.pdf");
     }
   </script>
 
 </body>
 </html>
+
