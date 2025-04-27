@@ -1,4 +1,4 @@
-<html lang="ar">
+html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>موقع السيرة الذاتية - متعدد الصفحات</title>
@@ -9,6 +9,8 @@
     button { padding: 10px 20px; margin: 0 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #45a049; }
     ul { padding-right: 20px; }
+    form label { display: block; margin-bottom: 10px; }
+    form input, form textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
   </style>
 </head>
 <body>
@@ -23,22 +25,54 @@
 
 <div id="page2" class="page">
   <h2>الصفحة 2: تعبئة البيانات</h2>
-  <p>يحتوي النموذج على خانات لاسمك الكامل، بريدك الإلكتروني، النوع، والمؤهل الدراسي.</p>
+  <form id="cvForm">
+    <label>الاسم الكامل:</label>
+    <input type="text" id="name" required>
+
+    <label>البريد الإلكتروني:</label>
+    <input type="email" id="email" required>
+
+    <label>المؤهل الدراسي:</label>
+    <input type="text" id="education" required placeholder="مثال: بكاليريوس في علوم الكمبيوتر">
+
+    <label>طرق التواصل:</label>
+    <textarea id="contactMethods" rows="3" placeholder="البريد الإلكتروني، الهاتف..."></textarea>
+
+    <button type="submit">الانتقال للصفحة التالية</button>
+  </form>
 </div>
 
 <div id="page3" class="page">
   <h2>الصفحة 3: الخبرة والمهارات</h2>
-  <p>تضيف خبراتك السابقة ومهاراتك التقنية أو الشخصية هنا.</p>
+  <form>
+    <label>الخبرة:</label>
+    <textarea id="experience" rows="4"></textarea>
+
+    <label>المهارات:</label>
+    <textarea id="skills" rows="3"></textarea>
+
+    <button type="button" onclick="nextPage()">الانتقال للصفحة التالية</button>
+  </form>
 </div>
 
 <div id="page4" class="page">
   <h2>الصفحة 4: رفع صورة شخصية</h2>
-  <p>يمكنك رفع صورة شخصية تظهر في سيرتك الذاتية المعروضة.</p>
+  <label>رفع صورة شخصية:</label>
+  <input type="file" id="image" accept="image/*">
 </div>
 
 <div id="page5" class="page">
   <h2>الصفحة 5: عرض السيرة الذاتية</h2>
-  <p>بعد تعبئة البيانات، تعرض سيرتك الذاتية مع كل التفاصيل ويمكنك تحميلها كملف PDF.</p>
+  <div id="cvOutput">
+    <p><strong>الاسم:</strong> <span id="cvName"></span></p>
+    <p><strong>البريد الإلكتروني:</strong> <span id="cvEmail"></span></p>
+    <p><strong>المؤهل الدراسي:</strong> <span id="cvEducation"></span></p>
+    <p><strong>طرق التواصل:</strong> <span id="cvContactMethods"></span></p>
+    <p><strong>الخبرة:</strong> <span id="cvExperience"></span></p>
+    <p><strong>المهارات:</strong> <span id="cvSkills"></span></p>
+    <img id="cvImage" src="" alt="صورة شخصية" style="max-width: 150px;">
+    <button onclick="downloadPDF()">تحميل PDF</button>
+  </div>
 </div>
 
 <div id="page6" class="page">
@@ -51,7 +85,7 @@
 <div id="page7" class="page">
   <h2>الصفحة 7: المصممين</h2>
   <ul id="designersList">
-    <!-- يتم توليد الأسماء عشوائي -->
+    <!-- سيتم توليد الأسماء عشوائي هنا -->
   </ul>
 </div>
 
@@ -101,10 +135,73 @@
     });
   }
 
+  document.getElementById("cvForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // عرض البيانات المدخلة في السيرة الذاتية
+    document.getElementById("cvName").textContent = document.getElementById("name").value;
+    document.getElementById("cvEmail").textContent = document.getElementById("email").value;
+    document.getElementById("cvEducation").textContent = document.getElementById("education").value;
+    document.getElementById("cvContactMethods").textContent = document.getElementById("contactMethods").value;
+
+    showPage(3); // الانتقال إلى صفحة الخبرة والمهارات
+  });
+
+  document.getElementById("page3").querySelector("button").addEventListener("click", function() {
+    document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
+    document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
+
+    showPage(4); // الانتقال إلى صفحة رفع الصورة
+  });
+
+  document.getElementById("page4").querySelector("button").addEventListener("click", function() {
+    var imageInput = document.getElementById("image").files[0];
+    if (imageInput) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var imgElement = document.getElementById("cvImage");
+        imgElement.src = e.target.result;
+        imgElement.style.display = "block";
+      };
+      reader.readAsDataURL(imageInput);
+    } else {
+      document.getElementById("cvImage").style.display = "none";
+    }
+
+    showPage(5); // الانتقال إلى صفحة عرض السيرة الذاتية
+  });
+
   window.onload = function() {
     showPage(currentPage);
-    shuffleDesigners();
+    shuffleDesigners(); // هذا السطر سيجعل المصممين يظهرون بشكل عشوائي
   };
+
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const name = document.getElementById("cvName").textContent;
+    const email = document.getElementById("cvEmail").textContent;
+    const education = document.getElementById("cvEducation").textContent;
+    const experience = document.getElementById("cvExperience").textContent;
+    const skills = document.getElementById("cvSkills").textContent;
+    const contactMethods = document.getElementById("cvContactMethods").textContent;
+    const imgSrc = document.getElementById("cvImage").src;
+
+    doc.text("السيرة الذاتية", 105, 20, { align: "center" });
+    doc.text(`الاسم: ${name}`, 20, 40);
+    doc.text(`البريد الإلكتروني: ${email}`, 20, 50);
+    doc.text(`المؤهل الدراسي: ${education}`, 20, 60);
+    doc.text(`الخبرة: ${experience}`, 20, 70);
+    doc.text(`المهارات: ${skills}`, 20, 80);
+    doc.text(`طرق التواصل: ${contactMethods}`, 20, 90);
+
+    if (imgSrc) {
+      doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40);
+    }
+
+    doc.save("cv.pdf");
+  }
 </script>
 
 </body>
