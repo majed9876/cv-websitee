@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     body { font-family: Tahoma, sans-serif; direction: rtl; padding: 20px; background: #f9f9f9; }
     .cv-box, form, .contact { background: white; padding: 20px; margin-top: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
     label { display: block; margin-top: 10px; }
-    input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    input, textarea, button, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
     button { background: #4CAF50; color: white; border: none; cursor: pointer; }
     button:hover { background: #45a049; }
     img { max-width: 150px; margin-top: 10px; }
@@ -25,6 +25,15 @@
     <label>البريد الإلكتروني:</label>
     <input type="email" id="email" required>
 
+    <label>النوع:</label>
+    <select id="gender" required>
+      <option value="ذكر">ذكر</option>
+      <option value="أنثى">أنثى</option>
+    </select>
+
+    <label>المؤهل الدراسي:</label>
+    <input type="text" id="education" required placeholder="مثال: بكاليروس في علوم الكمبيوتر">
+
     <label>الخبرة:</label>
     <textarea id="experience" rows="4"></textarea>
 
@@ -35,6 +44,9 @@
     <label>رفع صورة شخصية:</label>
     <input type="file" id="image" accept="image/*">
 
+    <label>طرق التواصل:</label>
+    <textarea id="contactMethods" rows="3" placeholder="مثال: البريد الإلكتروني، الهاتف، وسائل التواصل الاجتماعي..."></textarea>
+
     <button type="submit">عرض السيرة</button>
   </form>
 
@@ -43,10 +55,14 @@
     <img id="cvImage" src="" alt="صورة شخصية" style="display:none;">
     <p><strong>الاسم:</strong> <span id="cvName"></span></p>
     <p><strong>البريد:</strong> <span id="cvEmail"></span></p>
+    <p><strong>النوع:</strong> <span id="cvGender"></span></p>
+    <p><strong>المؤهل الدراسي:</strong> <span id="cvEducation"></span></p>
     <p><strong>الخبرة:</strong></p>
     <p id="cvExperience"></p>
     <p><strong>المهارات:</strong></p>
     <p id="cvSkills"></p>
+    <p><strong>طرق التواصل:</strong></p>
+    <p id="cvContactMethods"></p>
     <button onclick="downloadPDF()">تحميل PDF</button>
   </div>
 
@@ -65,8 +81,11 @@
       // عرض البيانات المدخلة في السيرة الذاتية
       document.getElementById("cvName").textContent = document.getElementById("name").value;
       document.getElementById("cvEmail").textContent = document.getElementById("email").value;
+      document.getElementById("cvGender").textContent = document.getElementById("gender").value;
+      document.getElementById("cvEducation").textContent = document.getElementById("education").value;
       document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
       document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
+      document.getElementById("cvContactMethods").textContent = document.getElementById("contactMethods").value;
 
       // عرض الصورة إذا تم رفعها
       var imageInput = document.getElementById("image").files[0];
@@ -91,17 +110,24 @@
 
       const name = document.getElementById("cvName").textContent;
       const email = document.getElementById("cvEmail").textContent;
+      const gender = document.getElementById("cvGender").textContent;
+      const education = document.getElementById("cvEducation").textContent;
       const exp = document.getElementById("cvExperience").textContent;
       const skills = document.getElementById("cvSkills").textContent;
+      const contactMethods = document.getElementById("cvContactMethods").textContent;
       const imgSrc = document.getElementById("cvImage").src;
 
       doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
       doc.text(`الاسم: ${name}`, 20, 40);
       doc.text(`البريد: ${email}`, 20, 50);
-      doc.text(`الخبرة:`, 20, 65);
-      doc.text(exp, 30, 75);
-      doc.text(`المهارات:`, 20, 100);
-      doc.text(skills, 30, 110);
+      doc.text(`النوع: ${gender}`, 20, 60);
+      doc.text(`المؤهل الدراسي: ${education}`, 20, 70);
+      doc.text(`الخبرة:`, 20, 85);
+      doc.text(exp, 30, 95);
+      doc.text(`المهارات:`, 20, 120);
+      doc.text(skills, 30, 130);
+      doc.text(`طرق التواصل:`, 20, 150);
+      doc.text(contactMethods, 30, 160);
 
       // إضافة الصورة إلى PDF إذا كانت موجودة
       if (imgSrc) {
@@ -114,4 +140,3 @@
 
 </body>
 </html>
-
