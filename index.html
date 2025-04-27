@@ -68,13 +68,32 @@
   <!-- قسم تواصل معنا -->
   <div class="contact">
     <h2>تواصل معنا</h2>
-    <p>📧 البريد الإلكتروني: websitesupport@gmail.com</p>
+    <p>📧 البريد الإلكتروني: support@gmail.com</p>
     <p>📞 الهاتف: +966 55823 4139</p>
     <p>🌐 موقعنا: www.cvwebsite.com</p>
-    <p>المصممين:ماجدالرشيدي،عبدالله العنزي،سلمان الحارثي،نواف البلوي،خالد توفيق</p>
+    <p>المصممين: <span id="designers"></span></p> <!-- هذا العنصر لعرض أسماء المصممين -->
   </div>
 
   <script>
+    // وظيفة لاختيار الأسماء عشوائيًا
+    function displayRandomDesigners() {
+      const designers = [
+        "ماجد الرشيدي",
+        "سلمان الحارثي",
+        "نواف البلوي",
+        "خالد توفيق"
+      ];
+
+      // خلط الأسماء بشكل عشوائي
+      designers.sort(() => Math.random() - 0.5);
+
+      // عرض الأسماء العشوائية
+      document.getElementById("designers").textContent = designers.join(", ");
+    }
+
+    // استدعاء وظيفة الخلط عند تحميل الصفحة
+    window.onload = displayRandomDesigners;
+
     document.getElementById("cvForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
@@ -117,7 +136,7 @@
       const contactMethods = document.getElementById("cvContactMethods").textContent;
       const imgSrc = document.getElementById("cvImage").src;
 
-      doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
+      doc.text("السيرة الذاتية", 105, 20, { align: "center" });
       doc.text(`الاسم: ${name}`, 20, 40);
       doc.text(`البريد: ${email}`, 20, 50);
       doc.text(`النوع: ${gender}`, 20, 60);
