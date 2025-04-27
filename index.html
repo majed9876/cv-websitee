@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مولد السيرة الذاتية</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Tahoma, sans-serif; direction: rtl; padding: 20px; background: #f9f9f9; }
+    .cv-box, form, .contact { background: white; padding: 20px; margin-top: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; }
+    input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+
+  <h1>مولد السيرة الذاتية</h1>
+
+  <form id="cvForm">
+    <label>الاسم الكامل:</label>
+    <input type="text" id="name" required>
+
+    <label>البريد الإلكتروني:</label>
+    <input type="email" id="email" required>
+
+    <label>الخبرة:</label>
+    <textarea id="experience" rows="4"></textarea>
+
+    <label>المهارات:</label>
+    <textarea id="skills" rows="3"></textarea>
+
+    <button type="submit">عرض السيرة</button>
+  </form>
+
+  <div id="cvOutput" class="cv-box" style="display:none;">
+    <h2>سيرتك الذاتية</h2>
+    <p><strong>الاسم:</strong> <span id="cvName"></span></p>
+    <p><strong>البريد:</strong> <span id="cvEmail"></span></p>
+    <p><strong>الخبرة:</strong></p>
+    <p id="cvExperience"></p>
+    <p><strong>المهارات:</strong></p>
+    <p id="cvSkills"></p>
+    <button onclick="downloadPDF()">تحميل PDF</button>
+  </div>
+
+  <!-- قسم تواصل معنا -->
+  <div class="contact">
+    <h2>تواصل معنا</h2>
+    <p>📧 البريد الإلكتروني: support@example.com</p>
+    <p>📞 الهاتف: +966 123 456 789</p>
+    <p>🌐 موقعنا: www.example.com</p>
+  </div>
+
+  <script>
+    document.getElementById("cvForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      document.getElementById("cvName").textContent = document.getElementById("name").value;
+      document.getElementById("cvEmail").textContent = document.getElementById("email").value;
+      document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
+      document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
+
+      document.getElementById("cvOutput").style.display = "block";
+    });
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const name = document.getElementById("cvName").textContent;
+      const email = document.getElementById("cvEmail").textContent;
+      const exp = document.getElementById("cvExperience").textContent;
+      const skills = document.getElementById("cvSkills").textContent;
+
+      doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
+      doc.text(`الاسم: ${name}`, 20, 40);
+      doc.text(`البريد: ${email}`, 20, 50);
+      doc.text(`الخبرة:`, 20, 65);
+      doc.text(exp, 30, 75);
+      doc.text(`المهارات:`, 20, 100);
+      doc.text(skills, 30, 110);
+
+      doc.save("cv.pdf");
+    }
+  </script>
+
+</body>
+</html>
