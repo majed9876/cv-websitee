@@ -1,179 +1,111 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>موقع السيرة الذاتية</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>موقع السيرة الذاتية - متعدد الصفحات</title>
   <style>
-    body { font-family: Tahoma, sans-serif; direction: rtl; padding: 20px; background: #f9f9f9; }
-    .cv-box, form, .contact { background: white; padding: 20px; margin-top: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 10px; }
-    input, textarea, button, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+    body { font-family: Tahoma, sans-serif; direction: rtl; background: #f9f9f9; margin: 0; padding: 20px; }
+    .page { display: none; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; }
+    .buttons { margin-top: 20px; text-align: center; }
+    button { padding: 10px 20px; margin: 0 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #45a049; }
-    img { max-width: 150px; margin-top: 10px; }
+    ul { padding-right: 20px; }
   </style>
 </head>
 <body>
 
-  <h1> السيرة الذاتية</h1>
+<h1>موقع السيرة الذاتية</h1>
 
-  <form id="cvForm">
-    <label>الاسم الكامل:</label>
-    <input type="text" id="name" required>
+<!-- الصفحات -->
+<div id="page1" class="page">
+  <h2>الصفحة 1: مقدمة عن الموقع</h2>
+  <p>هذا الموقع يسمح لك بإنشاء سيرة ذاتية بشكل بسيط واحترافي.</p>
+</div>
 
-    <label>البريد الإلكتروني:</label>
-    <input type="email" id="email" required>
+<div id="page2" class="page">
+  <h2>الصفحة 2: تعبئة البيانات</h2>
+  <p>يحتوي النموذج على خانات لاسمك الكامل، بريدك الإلكتروني، النوع، والمؤهل الدراسي.</p>
+</div>
 
-    <label>النوع:</label>
-    <select id="gender" required>
-      <option value="ذكر">ذكر</option>
-      <option value="أنثى">أنثى</option>
-    </select>
+<div id="page3" class="page">
+  <h2>الصفحة 3: الخبرة والمهارات</h2>
+  <p>تضيف خبراتك السابقة ومهاراتك التقنية أو الشخصية هنا.</p>
+</div>
 
-    <label>المؤهل الدراسي:</label>
-    <input type="text" id="education" required placeholder="مثال: بكاليروس في علوم الكمبيوتر">
+<div id="page4" class="page">
+  <h2>الصفحة 4: رفع صورة شخصية</h2>
+  <p>يمكنك رفع صورة شخصية تظهر في سيرتك الذاتية المعروضة.</p>
+</div>
 
-    <label>الخبرة:</label>
-    <textarea id="experience" rows="4"></textarea>
+<div id="page5" class="page">
+  <h2>الصفحة 5: عرض السيرة الذاتية</h2>
+  <p>بعد تعبئة البيانات، تعرض سيرتك الذاتية مع كل التفاصيل ويمكنك تحميلها كملف PDF.</p>
+</div>
 
-    <label>المهارات:</label>
-    <textarea id="skills" rows="3"></textarea>
+<div id="page6" class="page">
+  <h2>الصفحة 6: طرق التواصل معنا</h2>
+  <p>📧 البريد الإلكتروني: support@gmail.com</p>
+  <p>📞 الهاتف: +966 55823 4139</p>
+  <p>🌐 موقعنا: www.cvwebsite.com</p>
+</div>
 
-    <!-- إضافة حقل رفع الصورة -->
-    <label>رفع صورة شخصية:</label>
-    <input type="file" id="image" accept="image/*">
+<div id="page7" class="page">
+  <h2>الصفحة 7: المصممين</h2>
+  <ul id="designersList">
+    <!-- يتم توليد الأسماء عشوائي -->
+  </ul>
+</div>
 
-    <label>طرق التواصل:</label>
-    <textarea id="contactMethods" rows="3" placeholder="مثال: البريد الإلكتروني، الهاتف، وسائل التواصل الاجتماعي..."></textarea>
+<!-- أزرار تنقل -->
+<div class="buttons">
+  <button onclick="prevPage()">Back</button>
+  <button onclick="nextPage()">Next</button>
+</div>
 
-    <button type="submit">عرض السيرة</button>
-  </form>
+<script>
+  let currentPage = 1;
+  const totalPages = 7;
 
-  <div id="cvOutput" class="cv-box" style="display:none;">
-    <h2>سيرتك الذاتية</h2>
-    <img id="cvImage" src="" alt="صورة شخصية" style="display:none;">
-    <p><strong>الاسم:</strong> <span id="cvName"></span></p>
-    <p><strong>البريد:</strong> <span id="cvEmail"></span></p>
-    <p><strong>النوع:</strong> <span id="cvGender"></span></p>
-    <p><strong>المؤهل الدراسي:</strong> <span id="cvEducation"></span></p>
-    <p><strong>الخبرة:</strong></p>
-    <p id="cvExperience"></p>
-    <p><strong>المهارات:</strong></p>
-    <p id="cvSkills"></p>
-    <p><strong>طرق التواصل:</strong></p>
-    <p id="cvContactMethods"></p>
-    <button onclick="downloadPDF()">تحميل PDF</button>
-  </div>
-
-  <!-- قسم تواصل معنا -->
-  <div class="contact">
-    <h2>تواصل معنا</h2>
-    <p>📧 البريد الإلكتروني: webssupport11@gmail.com</p>
-    <p>📞 الهاتف: +966 55823 4139</p>
-    <p>🌐 موقعنا: www.cvwebsite.com</p>
-    <p>المصممين:
-      <ul id="designersList">
-        <li>ماجد الرشيدي</li>
-        <li>سلمان الحارثي</li>
-        <li>نواف البلوي</li>
-        <li>خالد توفيق</li>
-        <li>عبد الله العنزي</li>
-      </ul>
-    </p>
-  </div>
-
-  <script>
-    // Function to shuffle designer names randomly
-    function shuffleDesigners() {
-      const designers = [
-        "ماجد الرشيدي", 
-        "سلمان الحارثي", 
-        "نواف البلوي", 
-        "خالد توفيق", 
-        "عبد الله العنزي"
-      ];
-
-      // Shuffle array
-      for (let i = designers.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [designers[i], designers[j]] = [designers[j], designers[i]]; // Swap
-      }
-
-      // Update the list in HTML
-      const list = document.getElementById("designersList");
-      list.innerHTML = ""; // Clear the existing list
-      designers.forEach(designer => {
-        const li = document.createElement("li");
-        li.textContent = designer;
-        list.appendChild(li);
-      });
+  function showPage(page) {
+    for (let i = 1; i <= totalPages; i++) {
+      document.getElementById('page' + i).style.display = 'none';
     }
+    document.getElementById('page' + page).style.display = 'block';
+  }
 
-    // Call shuffleDesigners function when the page loads
-    window.onload = shuffleDesigners;
+  function nextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+      showPage(currentPage);
+    }
+  }
 
-    document.getElementById("cvForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage);
+    }
+  }
 
-      // عرض البيانات المدخلة في السيرة الذاتية
-      document.getElementById("cvName").textContent = document.getElementById("name").value;
-      document.getElementById("cvEmail").textContent = document.getElementById("email").value;
-      document.getElementById("cvGender").textContent = document.getElementById("gender").value;
-      document.getElementById("cvEducation").textContent = document.getElementById("education").value;
-      document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
-      document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
-      document.getElementById("cvContactMethods").textContent = document.getElementById("contactMethods").value;
-
-      // عرض الصورة إذا تم رفعها
-      var imageInput = document.getElementById("image").files[0];
-      if (imageInput) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          var imgElement = document.getElementById("cvImage");
-          imgElement.src = e.target.result;
-          imgElement.style.display = "block";
-        };
-        reader.readAsDataURL(imageInput);
-      } else {
-        document.getElementById("cvImage").style.display = "none";
-      }
-
-      document.getElementById("cvOutput").style.display = "block";
+  function shuffleDesigners() {
+    const designers = ["ماجد الرشيدي", "سلمان الحارثي", "نواف البلوي", "خالد توفيق", "عبد الله العنزي"];
+    for (let i = designers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [designers[i], designers[j]] = [designers[j], designers[i]];
+    }
+    const list = document.getElementById('designersList');
+    list.innerHTML = '';
+    designers.forEach(name => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      list.appendChild(li);
     });
+  }
 
-    function downloadPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      const name = document.getElementById("cvName").textContent;
-      const email = document.getElementById("cvEmail").textContent;
-      const gender = document.getElementById("cvGender").textContent;
-      const education = document.getElementById("cvEducation").textContent;
-      const exp = document.getElementById("cvExperience").textContent;
-      const skills = document.getElementById("cvSkills").textContent;
-      const contactMethods = document.getElementById("cvContactMethods").textContent;
-      const imgSrc = document.getElementById("cvImage").src;
-
-      doc.text(`السيرة الذاتية`, 105, 20, { align: "center" });
-      doc.text(`الاسم: ${name}`, 20, 40);
-      doc.text(`البريد: ${email}`, 20, 50);
-      doc.text(`النوع: ${gender}`, 20, 60);
-      doc.text(`المؤهل الدراسي: ${education}`, 20, 70);
-      doc.text(`الخبرة:`, 20, 85);
-      doc.text(exp, 30, 95);
-      doc.text(`المهارات:`, 20, 120);
-      doc.text(skills, 30, 130);
-      doc.text(`طرق التواصل:`, 20, 150);
-      doc.text(contactMethods, 30, 160);
-
-      // إضافة الصورة إلى PDF إذا كانت موجودة
-      if (imgSrc) {
-        doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40);  // تحديد موقع وحجم الصورة
-      }
-
-      doc.save("cv.pdf");
-    }
-  </script>
+  window.onload = function() {
+    showPage(currentPage);
+    shuffleDesigners();
+  };
+</script>
 
 </body>
 </html>
