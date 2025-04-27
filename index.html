@@ -60,6 +60,7 @@
   <h2>الصفحة 4: رفع صورة شخصية</h2>
   <label>رفع صورة شخصية:</label>
   <input type="file" id="image" accept="image/*">
+  <button type="button" onclick="nextPage()">الانتقال للصفحة التالية</button>
 </div>
 
 <div id="page5" class="page">
@@ -86,11 +87,7 @@
 <div id="page7" class="page">
   <h2>الصفحة 7: المصممين</h2>
   <ul id="designersList">
-    <li>ماجد الرشيدي</li>
-    <li>خالد توفيق</li>
-    <li>سلمان الحارثي</li>
-    <li>عبد الله العنزي</li>
-    <li>نواف البلوي</li>
+    <!-- المصممين رح ينضافون هنا بالكود -->
   </ul>
 </div>
 
@@ -104,7 +101,36 @@
   let currentPage = 1;
   const totalPages = 7;
 
-  // دالة لعرض الصفحة وتحديث البيانات في الصفحة 5
+  // مصممين الموقع
+  const designers = [
+    "ماجد الرشيدي",
+    "خالد توفيق",
+    "سلمان الحارثي",
+    "عبد الله العنزي",
+    "نواف البلوي"
+  ];
+
+  // خلط المصفوفة
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // عرض المصممين بشكل عشوائي
+  function displayDesigners() {
+    const list = document.getElementById("designersList");
+    list.innerHTML = "";
+    shuffleArray(designers);
+    designers.forEach(name => {
+      const li = document.createElement("li");
+      li.textContent = name;
+      list.appendChild(li);
+    });
+  }
+
+  // عرض الصفحة المطلوبة
   function showPage(page) {
     for (let i = 1; i <= totalPages; i++) {
       document.getElementById('page' + i).style.display = 'none';
@@ -112,11 +138,13 @@
     document.getElementById('page' + page).style.display = 'block';
 
     if (page === 5) {
-      updateCVOutput(); // تحديث البيانات في صفحة عرض السيرة الذاتية
+      updateCVOutput();
+    } else if (page === 7) {
+      displayDesigners();
     }
   }
 
-  // تحديث البيانات في صفحة عرض السيرة الذاتية
+  // تحديث بيانات السيرة
   function updateCVOutput() {
     document.getElementById("cvName").textContent = document.getElementById("name").value;
     document.getElementById("cvEmail").textContent = document.getElementById("email").value;
@@ -126,7 +154,7 @@
     document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
   }
 
-  // الانتقال إلى الصفحة التالية
+  // التالي
   function nextPage() {
     if (currentPage < totalPages) {
       currentPage++;
@@ -134,7 +162,7 @@
     }
   }
 
-  // الانتقال إلى الصفحة السابقة
+  // السابق
   function prevPage() {
     if (currentPage > 1) {
       currentPage--;
@@ -142,42 +170,7 @@
     }
   }
 
-  // إضافة أحداث الاستماع للنموذج
-  document.getElementById("cvForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    showPage(3); // الانتقال إلى صفحة الخبرة والمهارات
-  });
-
-  // الانتقال من صفحة 3 إلى صفحة 4 بعد إضافة الخبرة والمهارات
-  document.getElementById("page3").querySelector("button").addEventListener("click", function() {
-    showPage(4); // الانتقال إلى صفحة رفع الصورة
-  });
-
-  // رفع الصورة الشخصية
-  document.getElementById("page4").querySelector("button").addEventListener("click", function() {
-    var imageInput = document.getElementById("image").files[0];
-    if (imageInput) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var imgElement = document.getElementById("cvImage");
-        imgElement.src = e.target.result;
-        imgElement.style.display = "block";
-      };
-      reader.readAsDataURL(imageInput);
-    } else {
-      document.getElementById("cvImage").style.display = "none";
-    }
-
-    showPage(5); // الانتقال إلى صفحة عرض السيرة الذاتية
-  });
-
-  // عند تحميل الصفحة
-  window.onload = function() {
-    showPage(currentPage);
-  };
-
-  // تحميل السيرة الذاتية PDF
+  // حفظ السيرة PDF
   function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -199,11 +192,16 @@
     doc.text(`طرق التواصل: ${contactMethods}`, 20, 90);
 
     if (imgSrc) {
-      doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40); // إضافة الصورة في الـ PDF
+      doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40);
     }
 
     doc.save("cv.pdf");
   }
+
+  // عند تحميل الصفحة
+  window.onload = function() {
+    showPage(currentPage);
+  };
 </script>
 
 </body>
