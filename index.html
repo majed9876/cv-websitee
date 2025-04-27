@@ -2,6 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <title>موقع السيرة الذاتية - متعدد الصفحات</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- إضافة مكتبة jsPDF -->
   <style>
     body { font-family: Tahoma, sans-serif; direction: rtl; background: #f9f9f9; margin: 0; padding: 20px; }
     .page { display: none; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 20px; }
@@ -44,25 +45,21 @@
 
 <div id="page3" class="page">
   <h2>الصفحة 3: الخبرة والمهارات</h2>
-  <form id="experienceForm">
+  <form>
     <label>الخبرة:</label>
     <textarea id="experience" rows="4"></textarea>
 
     <label>المهارات:</label>
     <textarea id="skills" rows="3"></textarea>
 
-    <button type="submit">الانتقال للصفحة التالية</button>
+    <button type="button" onclick="nextPage()">الانتقال للصفحة التالية</button>
   </form>
 </div>
 
 <div id="page4" class="page">
   <h2>الصفحة 4: رفع صورة شخصية</h2>
-  <form id="imageForm">
-    <label>رفع صورة شخصية:</label>
-    <input type="file" id="image" accept="image/*">
-
-    <button type="submit">الانتقال للصفحة التالية</button>
-  </form>
+  <label>رفع صورة شخصية:</label>
+  <input type="file" id="image" accept="image/*">
 </div>
 
 <div id="page5" class="page">
@@ -74,7 +71,7 @@
     <p><strong>طرق التواصل:</strong> <span id="cvContactMethods"></span></p>
     <p><strong>الخبرة:</strong> <span id="cvExperience"></span></p>
     <p><strong>المهارات:</strong> <span id="cvSkills"></span></p>
-    <img id="cvImage" src="" alt="صورة شخصية" style="max-width: 150px; display: none;">
+    <img id="cvImage" src="" alt="صورة شخصية" style="max-width: 150px;">
     <button onclick="downloadPDF()">تحميل PDF</button>
   </div>
 </div>
@@ -89,7 +86,11 @@
 <div id="page7" class="page">
   <h2>الصفحة 7: المصممين</h2>
   <ul id="designersList">
-    <!-- سيتم توليد الأسماء عشوائي هنا -->
+    <li>ماجد الرشيدي</li>
+    <li>خالد توفيق</li>
+    <li>سلمان الحارثي</li>
+    <li>عبد الله العنزي</li>
+    <li>نواف البلوي</li>
   </ul>
 </div>
 
@@ -99,18 +100,33 @@
   <button onclick="nextPage()">Next</button>
 </div>
 
-<!-- سكربت -->
 <script>
   let currentPage = 1;
   const totalPages = 7;
 
+  // دالة لعرض الصفحة وتحديث البيانات في الصفحة 5
   function showPage(page) {
     for (let i = 1; i <= totalPages; i++) {
       document.getElementById('page' + i).style.display = 'none';
     }
     document.getElementById('page' + page).style.display = 'block';
+
+    if (page === 5) {
+      updateCVOutput(); // تحديث البيانات في صفحة عرض السيرة الذاتية
+    }
   }
 
+  // تحديث البيانات في صفحة عرض السيرة الذاتية
+  function updateCVOutput() {
+    document.getElementById("cvName").textContent = document.getElementById("name").value;
+    document.getElementById("cvEmail").textContent = document.getElementById("email").value;
+    document.getElementById("cvEducation").textContent = document.getElementById("education").value;
+    document.getElementById("cvContactMethods").textContent = document.getElementById("contactMethods").value;
+    document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
+    document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
+  }
+
+  // الانتقال إلى الصفحة التالية
   function nextPage() {
     if (currentPage < totalPages) {
       currentPage++;
@@ -118,6 +134,7 @@
     }
   }
 
+  // الانتقال إلى الصفحة السابقة
   function prevPage() {
     if (currentPage > 1) {
       currentPage--;
@@ -125,39 +142,20 @@
     }
   }
 
-  function shuffleDesigners() {
-    const designers = ["ماجد الرشيدي", "سلمان الحارثي", "نواف البلوي", "خالد توفيق", "عبد الله العنزي"];
-    for (let i = designers.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [designers[i], designers[j]] = [designers[j], designers[i]];
-    }
-    const list = document.getElementById('designersList');
-    list.innerHTML = '';
-    designers.forEach(name => {
-      const li = document.createElement('li');
-      li.textContent = name;
-      list.appendChild(li);
-    });
-  }
-
+  // إضافة أحداث الاستماع للنموذج
   document.getElementById("cvForm").addEventListener("submit", function(e) {
     e.preventDefault();
-    document.getElementById("cvName").textContent = document.getElementById("name").value;
-    document.getElementById("cvEmail").textContent = document.getElementById("email").value;
-    document.getElementById("cvEducation").textContent = document.getElementById("education").value;
-    document.getElementById("cvContactMethods").textContent = document.getElementById("contactMethods").value;
-    showPage(3);
+
+    showPage(3); // الانتقال إلى صفحة الخبرة والمهارات
   });
 
-  document.getElementById("experienceForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    document.getElementById("cvExperience").textContent = document.getElementById("experience").value;
-    document.getElementById("cvSkills").textContent = document.getElementById("skills").value;
-    showPage(4);
+  // الانتقال من صفحة 3 إلى صفحة 4 بعد إضافة الخبرة والمهارات
+  document.getElementById("page3").querySelector("button").addEventListener("click", function() {
+    showPage(4); // الانتقال إلى صفحة رفع الصورة
   });
 
-  document.getElementById("imageForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+  // رفع الصورة الشخصية
+  document.getElementById("page4").querySelector("button").addEventListener("click", function() {
     var imageInput = document.getElementById("image").files[0];
     if (imageInput) {
       var reader = new FileReader();
@@ -167,15 +165,19 @@
         imgElement.style.display = "block";
       };
       reader.readAsDataURL(imageInput);
+    } else {
+      document.getElementById("cvImage").style.display = "none";
     }
-    showPage(5);
+
+    showPage(5); // الانتقال إلى صفحة عرض السيرة الذاتية
   });
 
+  // عند تحميل الصفحة
   window.onload = function() {
     showPage(currentPage);
-    shuffleDesigners();
   };
 
+  // تحميل السيرة الذاتية PDF
   function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -197,15 +199,12 @@
     doc.text(`طرق التواصل: ${contactMethods}`, 20, 90);
 
     if (imgSrc) {
-      doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40);
+      doc.addImage(imgSrc, 'JPEG', 150, 20, 40, 40); // إضافة الصورة في الـ PDF
     }
 
     doc.save("cv.pdf");
   }
 </script>
-
-<!-- مكتبة jspdf -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </body>
 </html>
